@@ -9,6 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    private var displayLink: CADisplayLink?
+
     let countingLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -39,8 +41,8 @@ class ViewController: UIViewController {
     }
 
     private func setupAnimation() {
-        let displayLink = CADisplayLink(target: self, selector: #selector(handleUpdate))
-        displayLink.add(to: .main, forMode: .default)
+        displayLink = CADisplayLink(target: self, selector: #selector(handleUpdate))
+        displayLink?.add(to: .main, forMode: .default)
     }
 
     var startValue: Double = 0
@@ -56,6 +58,8 @@ class ViewController: UIViewController {
 
         if elapsedTime > animationDuration {
             self.countingLabel.text = "\(endValue)"
+            displayLink?.invalidate()
+            displayLink = nil
         } else {
             let percentage = elapsedTime / animationDuration
             let value = startValue + percentage * (endValue - startValue)
